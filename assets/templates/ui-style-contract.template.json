@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "",
+  "styleName": "",
+  "intent": "",
+  "productContext": {
+    "productType": "",
+    "audience": "",
+    "primaryJobs": [],
+    "contentDensity": ""
+  },
+  "visualPosture": {
+    "density": "",
+    "tone": "",
+    "ornamentation": "",
+    "brandExpression": ""
+  },
+  "tokens": {
+    "color": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadow": {},
+    "border": {}
+  },
+  "layoutRules": [],
+  "componentRules": {},
+  "interactionRules": [],
+  "accessibilityRules": [],
+  "avoid": [],
+  "imagePromptStyle": "",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}

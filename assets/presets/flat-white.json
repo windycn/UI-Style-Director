@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "flat-white",
+  "styleName": "Flat White",
+  "intent": "Clear, calm, high-efficiency SaaS interface for repeated daily work.",
+  "bestFor": ["SaaS", "dashboard", "productivity", "developer tools", "admin"],
+  "visualPosture": {
+    "density": "medium-high",
+    "tone": "calm, precise, utilitarian",
+    "ornamentation": "low",
+    "brandExpression": "restrained"
+  },
+  "tokens": {
+    "color": {
+      "background": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "surfaceMuted": "#F1F5F9",
+      "text": "#101828",
+      "muted": "#667085",
+      "accent": "#2563EB",
+      "border": "#E5E7EB",
+      "danger": "#DC2626",
+      "success": "#16A34A"
+    },
+    "typography": {
+      "fontFamily": "system-ui",
+      "bodySize": "14px",
+      "headingWeight": "650",
+      "lineHeight": "1.45"
+    },
+    "spacing": {
+      "grid": "4px",
+      "controlGap": "8px",
+      "panelPadding": "16px",
+      "sectionGap": "24px"
+    },
+    "radius": {
+      "control": "6px",
+      "panel": "8px",
+      "modal": "10px"
+    },
+    "shadow": {
+      "panel": "none",
+      "popover": "0 12px 32px rgba(15, 23, 42, 0.12)"
+    },
+    "border": {
+      "default": "1px solid #E5E7EB",
+      "strong": "1px solid #CBD5E1"
+    }
+  },
+  "layoutRules": [
+    "Prefer scan-friendly work surfaces over decorative sections.",
+    "Use full-width bands or panels, not nested floating cards.",
+    "Keep navigation persistent for products with more than three primary workflows."
+  ],
+  "componentRules": {
+    "buttons": ["Compact height", "One primary action per region", "Use icons for common tools"],
+    "forms": ["Labels above fields", "Group fields by task", "Use inline validation"],
+    "tables": ["Use readable row rhythm", "Prefer subtle borders", "Keep actions aligned"],
+    "cards": ["Use only for repeated items or bounded panels", "Avoid cards inside cards"],
+    "navigation": ["Keep labels concise", "Use clear active states"],
+    "modals": ["Use focused forms and direct actions"],
+    "charts": ["Use restrained color and strong labels"],
+    "states": ["Empty states should be useful, not decorative"]
+  },
+  "interactionRules": [
+    "Focus states must be visible.",
+    "Hover states should clarify affordance without shifting layout."
+  ],
+  "accessibilityRules": [
+    "Maintain WCAG AA contrast for text.",
+    "Do not rely on color alone for status."
+  ],
+  "avoid": [
+    "oversized app heroes",
+    "decorative gradient blobs",
+    "heavy shadows",
+    "low contrast gray text",
+    "cards inside cards",
+    "large pill-shaped controls unless already established"
+  ],
+  "imagePromptStyle": "A crisp light SaaS product interface, white surfaces, pale slate background, blue accent, dense but calm layout, precise spacing, practical controls, no decorative gradient blobs.",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}

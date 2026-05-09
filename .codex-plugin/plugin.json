@@ -1,0 +1,44 @@
+{
+  "name": "ui-style-director",
+  "version": "0.2.0",
+  "description": "Create enforceable UI style contracts from requirements, code, visual drafts, and presets.",
+  "author": {
+    "name": "Windy",
+    "email": "windy@example.com",
+    "url": "https://example.com"
+  },
+  "homepage": "https://example.com/ui-style-director",
+  "repository": "https://example.com/ui-style-director",
+  "license": "MIT",
+  "keywords": [
+    "ui",
+    "style-guide",
+    "design-system",
+    "frontend",
+    "image-generation"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "UI Style Director",
+    "shortDescription": "Turn requirements and code into enforceable UI style contracts.",
+    "longDescription": "Analyzes product requirements, content, screenshots, and existing UI code to select or create a visual style, generate image prompts or drafts, produce a persistent UI style contract, and guide Codex implementation and review.",
+    "developerName": "Windy",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "websiteURL": "https://example.com/ui-style-director",
+    "privacyPolicyURL": "https://example.com/privacy",
+    "termsOfServiceURL": "https://example.com/terms",
+    "defaultPrompt": [
+      "Analyze this app and create a UI style contract.",
+      "Apply the flat-white style to this frontend.",
+      "Review this UI against the style contract."
+    ],
+    "brandColor": "#2563EB",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/logo.png"
+  }
+}

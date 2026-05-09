@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "liquid-control",
+  "styleName": "Liquid Control",
+  "intent": "Modern system-feeling control UI with restrained translucency and precise interaction surfaces.",
+  "bestFor": ["macOS tools", "creative tools", "AI assistants", "media tools", "control panels"],
+  "visualPosture": {
+    "density": "medium",
+    "tone": "modern, tactile, precise",
+    "ornamentation": "medium-low",
+    "brandExpression": "system-like"
+  },
+  "tokens": {
+    "color": {
+      "background": "#EEF2F7",
+      "surface": "rgba(255, 255, 255, 0.78)",
+      "surfaceMuted": "rgba(248, 250, 252, 0.66)",
+      "text": "#111827",
+      "muted": "#5B6472",
+      "accent": "#2563EB",
+      "border": "rgba(148, 163, 184, 0.35)",
+      "danger": "#DC2626",
+      "success": "#16A34A"
+    },
+    "typography": {
+      "fontFamily": "system-ui",
+      "bodySize": "14px",
+      "headingWeight": "650",
+      "lineHeight": "1.45"
+    },
+    "spacing": {
+      "grid": "4px",
+      "controlGap": "8px",
+      "panelPadding": "16px",
+      "sectionGap": "24px"
+    },
+    "radius": {
+      "control": "10px",
+      "panel": "14px",
+      "modal": "16px"
+    },
+    "shadow": {
+      "panel": "0 14px 36px rgba(15, 23, 42, 0.12)",
+      "popover": "0 20px 54px rgba(15, 23, 42, 0.18)"
+    },
+    "border": {
+      "default": "1px solid rgba(148, 163, 184, 0.35)",
+      "strong": "1px solid rgba(100, 116, 139, 0.45)"
+    }
+  },
+  "layoutRules": [
+    "Use glass or translucency only for meaningful surfaces.",
+    "Keep text and controls on stable, readable backgrounds.",
+    "Use system-like toolbars, inspectors, and split panes where appropriate."
+  ],
+  "componentRules": {
+    "buttons": ["Tactile but compact", "Icon buttons for tools", "Avoid oversized pills"],
+    "forms": ["Use clear labels and stable input backgrounds"],
+    "tables": ["Prefer solid surfaces for dense data"],
+    "cards": ["Panels may be glass, repeated content should stay readable"],
+    "navigation": ["System-style sidebars or toolbars"],
+    "modals": ["Use focused glass or solid sheets"],
+    "charts": ["Do not put dense charts on heavily blurred surfaces"],
+    "states": ["Keep loading and disabled states legible"]
+  },
+  "interactionRules": [
+    "Motion should feel responsive and short.",
+    "Blur and transparency must not reduce legibility."
+  ],
+  "accessibilityRules": [
+    "Provide solid fallbacks for transparent surfaces.",
+    "Maintain contrast over variable backgrounds."
+  ],
+  "avoid": [
+    "glass everywhere",
+    "low contrast translucent text",
+    "large decorative blur blobs",
+    "unreadable controls over images",
+    "style effects that fight usability"
+  ],
+  "imagePromptStyle": "A modern system-like desktop tool interface, restrained translucent panels, crisp controls, clear split panes, precise typography, blue accent, readable surfaces, no excessive glass effects.",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}

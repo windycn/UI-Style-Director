@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "soft-minimal",
+  "styleName": "Soft Minimal",
+  "intent": "Calm, content-friendly interface with gentle hierarchy and low cognitive friction.",
+  "bestFor": ["knowledge management", "writing", "personal productivity", "education", "notes"],
+  "visualPosture": {
+    "density": "medium",
+    "tone": "quiet, warm, focused",
+    "ornamentation": "low",
+    "brandExpression": "gentle"
+  },
+  "tokens": {
+    "color": {
+      "background": "#FAFAF8",
+      "surface": "#FFFFFF",
+      "surfaceMuted": "#F2F2EE",
+      "text": "#1F2933",
+      "muted": "#6B7280",
+      "accent": "#4F46E5",
+      "border": "#E7E5DF",
+      "danger": "#C2410C",
+      "success": "#15803D"
+    },
+    "typography": {
+      "fontFamily": "system-ui",
+      "bodySize": "15px",
+      "headingWeight": "620",
+      "lineHeight": "1.55"
+    },
+    "spacing": {
+      "grid": "4px",
+      "controlGap": "10px",
+      "panelPadding": "18px",
+      "sectionGap": "28px"
+    },
+    "radius": {
+      "control": "8px",
+      "panel": "8px",
+      "modal": "12px"
+    },
+    "shadow": {
+      "panel": "none",
+      "popover": "0 14px 38px rgba(31, 41, 51, 0.12)"
+    },
+    "border": {
+      "default": "1px solid #E7E5DF",
+      "strong": "1px solid #D6D3CB"
+    }
+  },
+  "layoutRules": [
+    "Let content carry the interface.",
+    "Use moderate whitespace without reducing task clarity.",
+    "Prefer simple panes and focused editors."
+  ],
+  "componentRules": {
+    "buttons": ["Soft contrast", "Clear primary actions", "Avoid shouting colors"],
+    "forms": ["Gentle grouping", "Readable help text"],
+    "tables": ["Use only when comparison matters"],
+    "cards": ["Use sparingly for content objects"],
+    "navigation": ["Calm active states", "Avoid crowded nav"],
+    "modals": ["Short, focused, low drama"],
+    "charts": ["Readable and quiet"],
+    "states": ["Empty states can be helpful and plain"]
+  },
+  "interactionRules": [
+    "Transitions may be subtle and quick.",
+    "Avoid movement that distracts from reading or writing."
+  ],
+  "accessibilityRules": [
+    "Muted colors must still meet contrast requirements.",
+    "Focus states must be visible against soft surfaces."
+  ],
+  "avoid": [
+    "beige monotony",
+    "excessive softness that lowers contrast",
+    "large decorative blobs",
+    "heavy card stacks",
+    "marketing-style claims inside tools"
+  ],
+  "imagePromptStyle": "A calm minimal productivity interface, warm off-white background, simple white surfaces, gentle indigo accent, content-first layout, readable typography, restrained controls.",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "dense-saas",
+  "styleName": "Dense SaaS",
+  "intent": "High-throughput operational UI optimized for scanning, comparison, and repeated action.",
+  "bestFor": ["CRM", "ERP", "admin", "operations", "finance", "inventory"],
+  "visualPosture": {
+    "density": "high",
+    "tone": "efficient, neutral, operational",
+    "ornamentation": "very-low",
+    "brandExpression": "quiet"
+  },
+  "tokens": {
+    "color": {
+      "background": "#F6F7F9",
+      "surface": "#FFFFFF",
+      "surfaceMuted": "#EEF2F6",
+      "text": "#111827",
+      "muted": "#5B6472",
+      "accent": "#0F766E",
+      "border": "#D8DEE8",
+      "danger": "#B91C1C",
+      "success": "#15803D"
+    },
+    "typography": {
+      "fontFamily": "system-ui",
+      "bodySize": "13px",
+      "headingWeight": "650",
+      "lineHeight": "1.35"
+    },
+    "spacing": {
+      "grid": "4px",
+      "controlGap": "6px",
+      "panelPadding": "12px",
+      "sectionGap": "16px"
+    },
+    "radius": {
+      "control": "4px",
+      "panel": "6px",
+      "modal": "8px"
+    },
+    "shadow": {
+      "panel": "none",
+      "popover": "0 10px 28px rgba(15, 23, 42, 0.14)"
+    },
+    "border": {
+      "default": "1px solid #D8DEE8",
+      "strong": "1px solid #B8C2D0"
+    }
+  },
+  "layoutRules": [
+    "Prioritize tables, filters, sidebars, and persistent toolbars over large visual sections.",
+    "Keep common actions one click away.",
+    "Avoid whitespace that separates related operational controls."
+  ],
+  "componentRules": {
+    "buttons": ["Compact", "Icon buttons for frequent tools", "Text buttons for destructive or uncommon actions"],
+    "forms": ["Dense grouping", "Inline help only where it prevents errors"],
+    "tables": ["Sticky headers where useful", "Column alignment matters", "Bulk actions must be clear"],
+    "cards": ["Use as data groups only", "Avoid decorative cards"],
+    "navigation": ["Left sidebar or split-pane preferred for multi-workflow apps"],
+    "modals": ["Use for focused confirmation or creation only"],
+    "charts": ["Small multiples and compact legends preferred"],
+    "states": ["Loading states should preserve layout dimensions"]
+  },
+  "interactionRules": [
+    "Hover actions must not cause layout shift.",
+    "Keyboard workflows should remain fast for repeated tasks."
+  ],
+  "accessibilityRules": [
+    "Compact text must stay readable.",
+    "Touch targets can be compact on desktop but must be usable."
+  ],
+  "avoid": [
+    "marketing hero sections",
+    "large empty cards",
+    "oversized headings in tool surfaces",
+    "decorative illustrations",
+    "low information density"
+  ],
+  "imagePromptStyle": "A dense operational SaaS interface, compact tables, filters, sidebar navigation, efficient toolbar, neutral light palette, high readability, no marketing hero, no decorative illustration.",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}

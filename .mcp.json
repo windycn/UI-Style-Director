@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "ui-style-director": {
+      "command": "python3",
+      "args": [
+        "./scripts/ui_style_director_mcp.py"
+      ],
+      "cwd": ".",
+      "startup_timeout_sec": 30,
+      "tool_timeout_sec": 120
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "ink-black",
+  "styleName": "Ink Black",
+  "intent": "Dark, focused, high-contrast control surface for technical work.",
+  "bestFor": ["AI tools", "developer tools", "monitoring", "security", "data operations"],
+  "visualPosture": {
+    "density": "medium-high",
+    "tone": "focused, technical, confident",
+    "ornamentation": "low",
+    "brandExpression": "sharp"
+  },
+  "tokens": {
+    "color": {
+      "background": "#080A0F",
+      "surface": "#111827",
+      "surfaceMuted": "#1F2937",
+      "text": "#F8FAFC",
+      "muted": "#94A3B8",
+      "accent": "#38BDF8",
+      "border": "#293241",
+      "danger": "#F87171",
+      "success": "#4ADE80"
+    },
+    "typography": {
+      "fontFamily": "system-ui",
+      "bodySize": "14px",
+      "headingWeight": "650",
+      "lineHeight": "1.45"
+    },
+    "spacing": {
+      "grid": "4px",
+      "controlGap": "8px",
+      "panelPadding": "16px",
+      "sectionGap": "24px"
+    },
+    "radius": {
+      "control": "6px",
+      "panel": "8px",
+      "modal": "10px"
+    },
+    "shadow": {
+      "panel": "none",
+      "popover": "0 18px 48px rgba(0, 0, 0, 0.45)"
+    },
+    "border": {
+      "default": "1px solid #293241",
+      "strong": "1px solid #475569"
+    }
+  },
+  "layoutRules": [
+    "Use strong hierarchy through contrast and alignment, not decoration.",
+    "Keep critical data and controls close together.",
+    "Use dark surfaces with subtle border separation."
+  ],
+  "componentRules": {
+    "buttons": ["Use accent sparingly", "Primary actions should stand out clearly"],
+    "forms": ["Inputs need visible borders", "Errors must be high contrast"],
+    "tables": ["Preserve row legibility", "Use status color with labels"],
+    "cards": ["Use dark panels as work containers", "Avoid glossy card stacks"],
+    "navigation": ["Active state should be unmistakable"],
+    "modals": ["Use strong overlay contrast"],
+    "charts": ["Use accessible saturated accents"],
+    "states": ["Terminal and log states should be readable"]
+  },
+  "interactionRules": [
+    "Hover states may lift contrast but should not glow heavily.",
+    "Keyboard focus must be bright enough on dark backgrounds."
+  ],
+  "accessibilityRules": [
+    "Avoid pure black text regions with low contrast controls.",
+    "Use labels with status colors."
+  ],
+  "avoid": [
+    "neon cyberpunk excess",
+    "large glowing gradients",
+    "low contrast charcoal text",
+    "blurred atmospheric backgrounds",
+    "decorative glass overload"
+  ],
+  "imagePromptStyle": "A dark professional developer interface, ink black background, charcoal panels, cyan accent, sharp hierarchy, dense controls, readable code and data regions, restrained technical atmosphere.",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}

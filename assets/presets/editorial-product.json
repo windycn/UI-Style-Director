@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "0.1.0",
+  "styleId": "editorial-product",
+  "styleName": "Editorial Product",
+  "intent": "Product pages and narrative surfaces with strong information architecture and polished brand rhythm.",
+  "bestFor": ["landing pages", "product pages", "case studies", "reports", "launch pages"],
+  "visualPosture": {
+    "density": "medium",
+    "tone": "confident, crafted, readable",
+    "ornamentation": "medium",
+    "brandExpression": "clear"
+  },
+  "tokens": {
+    "color": {
+      "background": "#FFFFFF",
+      "surface": "#F6F8FB",
+      "surfaceMuted": "#EEF2F7",
+      "text": "#0F172A",
+      "muted": "#64748B",
+      "accent": "#E11D48",
+      "border": "#E2E8F0",
+      "danger": "#DC2626",
+      "success": "#16A34A"
+    },
+    "typography": {
+      "fontFamily": "system-ui",
+      "bodySize": "16px",
+      "headingWeight": "700",
+      "lineHeight": "1.5"
+    },
+    "spacing": {
+      "grid": "4px",
+      "controlGap": "10px",
+      "panelPadding": "20px",
+      "sectionGap": "48px"
+    },
+    "radius": {
+      "control": "6px",
+      "panel": "8px",
+      "modal": "10px"
+    },
+    "shadow": {
+      "panel": "none",
+      "popover": "0 18px 48px rgba(15, 23, 42, 0.16)"
+    },
+    "border": {
+      "default": "1px solid #E2E8F0",
+      "strong": "1px solid #CBD5E1"
+    }
+  },
+  "layoutRules": [
+    "Use narrative section rhythm and strong editorial hierarchy.",
+    "Hero areas should show the product or offer directly.",
+    "Keep supporting content scannable and grounded in real product value."
+  ],
+  "componentRules": {
+    "buttons": ["Confident primary action", "Secondary action should be quiet"],
+    "forms": ["Short and direct", "Avoid unnecessary fields"],
+    "tables": ["Use comparison tables with clear headings"],
+    "cards": ["Use for repeated proof points or features"],
+    "navigation": ["Simple top navigation preferred"],
+    "modals": ["Avoid modals in narrative flows unless necessary"],
+    "charts": ["Use charts as evidence, not decoration"],
+    "states": ["Use concise feedback"]
+  },
+  "interactionRules": [
+    "Motion should clarify transitions or product storytelling.",
+    "Avoid animations that delay comprehension."
+  ],
+  "accessibilityRules": [
+    "Large display type must remain readable.",
+    "Hero images must not obscure essential copy."
+  ],
+  "avoid": [
+    "generic gradient hero",
+    "text-only hero with no product signal",
+    "stock-like dark blurred imagery",
+    "empty decorative sections",
+    "feature-card overload"
+  ],
+  "imagePromptStyle": "A polished product page with strong editorial hierarchy, real product UI visible in the first viewport, crisp typography, restrained accent color, narrative section rhythm, no generic gradient hero.",
+  "codeMapping": {
+    "cssVariables": {},
+    "tailwind": {},
+    "componentPatterns": [],
+    "filesToInspect": []
+  }
+}
