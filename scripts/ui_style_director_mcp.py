@@ -10,6 +10,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,7 +18,7 @@ from typing import Any
 
 PROTOCOL_VERSION = "2024-11-05"
 SERVER_NAME = "ui-style-director"
-SERVER_VERSION = "0.2.0"
+SERVER_VERSION = "0.3.0"
 PLUGIN_ROOT = Path(__file__).resolve().parents[1]
 PRESETS_DIR = PLUGIN_ROOT / "assets" / "presets"
 
@@ -49,6 +50,28 @@ def write_json(path: Path, data: dict[str, Any]) -> None:
 def write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+def deep_merge(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(base)
+    for key, value in overlay.items():
+        if isinstance(value, dict) and isinstance(merged.get(key), dict):
+            merged[key] = deep_merge(merged[key], value)
+        else:
+            merged[key] = value
+    return merged
+
+
+def slug_key(value: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", value.strip()).strip("-").lower()
+    return slug or "value"
+
+
+def js_key(value: str) -> str:
+    key = re.sub(r"[^a-zA-Z0-9_$]+", "_", value.strip())
+    if not key or key[0].isdigit():
+        key = f"_{key}"
+    return key
 
 
 def base_path(base_dir: str | None = None) -> Path:
@@ -145,6 +168,51 @@ def build_contract(arguments: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def merge_contract(arguments: dict[str, Any]) -> dict[str, Any]:
+    contract_path = resolve_output(
+        str(arguments.get("contract_path") or ".ui-style/ui-style-contract.json"),
+        arguments.get("base_dir"),
+    )
+    out_path = resolve_output(
+        str(arguments.get("out_path") or arguments.get("contract_path") or ".ui-style/ui-style-contract.json"),
+        arguments.get("base_dir"),
+    )
+    preset_id = str(arguments.get("preset", "")).strip()
+    overrides = arguments.get("overrides") or {}
+    if not isinstance(overrides, dict):
+        raise ToolError("overrides must be a JSON object")
+
+    sources: list[str] = []
+    merged: dict[str, Any] = {}
+    if preset_id:
+        merged = deep_merge(merged, load_preset(preset_id))
+        sources.append(f"preset:{preset_id}")
+    if contract_path.exists():
+        merged = deep_merge(merged, load_json(contract_path))
+        sources.append(f"contract:{contract_path}")
+    if overrides:
+        merged = deep_merge(merged, overrides)
+        sources.append("overrides")
+    if not sources:
+        raise ToolError("Nothing to merge. Provide a preset, an existing contract, or overrides.")
+
+    merged["source"] = {
+        "kind": "merged",
+        "sources": sources,
+        "notes": arguments.get("notes", ""),
+        "generatedBy": SERVER_NAME,
+        "generatedAt": dt.datetime.now(dt.timezone.utc).isoformat(),
+    }
+    write_json(out_path, merged)
+    return {
+        "path": str(out_path),
+        "styleId": merged.get("styleId", ""),
+        "styleName": merged.get("styleName", ""),
+        "sources": sources,
+        "message": "UI style contract merged.",
+    }
+
+
 def lines(value: Any) -> str:
     if isinstance(value, list):
         return "\n".join(f"- {item}" for item in value)
@@ -203,6 +271,189 @@ The output should look like a real usable product screen. Do not make a generic 
         "path": path,
         "contractPath": str(contract_path),
         "styleId": contract.get("styleId", ""),
+    }
+
+
+def markdown_bullets(value: Any) -> str:
+    text = lines(value)
+    return text if text else "- Not specified."
+
+
+def token_table(tokens: dict[str, Any]) -> str:
+    rows = ["| Token group | Values |", "| --- | --- |"]
+    for group, values in tokens.items():
+        if isinstance(values, dict):
+            rendered = "<br>".join(f"`{key}`: `{val}`" for key, val in values.items())
+        else:
+            rendered = f"`{values}`"
+        rows.append(f"| `{group}` | {rendered} |")
+    return "\n".join(rows)
+
+
+def generate_style_guide(arguments: dict[str, Any]) -> dict[str, Any]:
+    contract_path = resolve_output(
+        str(arguments.get("contract_path") or ".ui-style/ui-style-contract.json"),
+        arguments.get("base_dir"),
+    )
+    out_path = resolve_output(
+        str(arguments.get("out_path") or ".ui-style/UI_STYLE_GUIDE.md"),
+        arguments.get("base_dir"),
+    )
+    contract = load_json(contract_path)
+    product = contract.get("productContext", {})
+    posture = contract.get("visualPosture", {})
+    tokens = contract.get("tokens", {})
+    components = contract.get("componentRules", {})
+    code_mapping = contract.get("codeMapping", {})
+
+    guide = f"""# UI Style Guide
+
+Generated from `{contract_path.name}`.
+
+## Style Direction
+
+- Style: `{contract.get("styleName") or contract.get("styleId", "custom")}`
+- Intent: {contract.get("intent", "Not specified.")}
+- Tone: {posture.get("tone", "Not specified.")}
+- Density: {posture.get("density", "Not specified.")}
+- Ornamentation: {posture.get("ornamentation", "Not specified.")}
+
+## Product Context
+
+- Product: {product.get("project", "Not specified.")}
+- Product type: {product.get("productType", "Not specified.")}
+- Audience: {product.get("audience", "Not specified.")}
+- Primary jobs: {", ".join(product.get("primaryJobs", [])) if product.get("primaryJobs") else "Not specified."}
+- Content density: {product.get("contentDensity", "Not specified.")}
+
+## Design Tokens
+
+{token_table(tokens) if isinstance(tokens, dict) else "Not specified."}
+
+## Layout Rules
+
+{markdown_bullets(contract.get("layoutRules", []))}
+
+## Component Rules
+
+{markdown_bullets(components)}
+
+## Interaction Rules
+
+{markdown_bullets(contract.get("interactionRules", []))}
+
+## Accessibility Rules
+
+{markdown_bullets(contract.get("accessibilityRules", []))}
+
+## Avoid
+
+{markdown_bullets(contract.get("avoid", []))}
+
+## Code Mapping
+
+{markdown_bullets(code_mapping)}
+
+## Implementation Notes
+
+- Apply shared tokens before page-specific styling.
+- Prefer the project's existing theme, CSS variables, Tailwind config, or component primitives.
+- Use image drafts only for visual alignment; implement from the contract.
+- Review touched UI against the contract before delivery.
+"""
+    write_text(out_path, guide)
+    return {
+        "path": str(out_path),
+        "contractPath": str(contract_path),
+        "styleId": contract.get("styleId", ""),
+        "message": "UI style guide written.",
+    }
+
+
+def css_variable_block(tokens: dict[str, Any], prefix: str) -> str:
+    rows = [":root {"]
+    for group, values in tokens.items():
+        if not isinstance(values, dict):
+            continue
+        for key, value in values.items():
+            rows.append(f"  --{prefix}-{slug_key(group)}-{slug_key(str(key))}: {value};")
+    rows.append("}")
+    rows.append("")
+    return "\n".join(rows)
+
+
+def tailwind_theme_snippet(tokens: dict[str, Any], prefix: str) -> str:
+    color_tokens = tokens.get("color", {}) if isinstance(tokens.get("color"), dict) else {}
+    radius_tokens = tokens.get("radius", {}) if isinstance(tokens.get("radius"), dict) else {}
+    spacing_tokens = tokens.get("spacing", {}) if isinstance(tokens.get("spacing"), dict) else {}
+    shadow_tokens = tokens.get("shadow", {}) if isinstance(tokens.get("shadow"), dict) else {}
+    type_tokens = tokens.get("typography", {}) if isinstance(tokens.get("typography"), dict) else {}
+
+    theme = {
+        "colors": {f"{prefix}-{key}": value for key, value in color_tokens.items()},
+        "borderRadius": {f"{prefix}-{key}": value for key, value in radius_tokens.items()},
+        "spacing": {f"{prefix}-{key}": value for key, value in spacing_tokens.items()},
+        "boxShadow": {f"{prefix}-{key}": value for key, value in shadow_tokens.items()},
+    }
+    if type_tokens.get("fontFamily"):
+        theme["fontFamily"] = {prefix: [type_tokens["fontFamily"]]}
+    if type_tokens.get("bodySize"):
+        theme["fontSize"] = {f"{prefix}-body": type_tokens["bodySize"]}
+
+    return f"""// Generated by UI Style Director.
+// Merge this object into `theme.extend` in your Tailwind config.
+
+const uiStyleDirectorTheme = {json.dumps(theme, indent=2, ensure_ascii=False)};
+
+module.exports = uiStyleDirectorTheme;
+"""
+
+
+def apply_contract_to_tailwind(arguments: dict[str, Any]) -> dict[str, Any]:
+    contract_path = resolve_output(
+        str(arguments.get("contract_path") or ".ui-style/ui-style-contract.json"),
+        arguments.get("base_dir"),
+    )
+    out_dir = resolve_output(str(arguments.get("out_dir") or ".ui-style"), arguments.get("base_dir"))
+    prefix = slug_key(str(arguments.get("prefix") or "ui"))
+    contract = load_json(contract_path)
+    tokens = contract.get("tokens", {})
+    if not isinstance(tokens, dict):
+        raise ToolError("Contract tokens must be a JSON object")
+
+    css_path = out_dir / "ui-style-tokens.css"
+    snippet_path = out_dir / "tailwind-theme-snippet.cjs"
+    notes_path = out_dir / "tailwind-implementation-notes.md"
+
+    write_text(css_path, css_variable_block(tokens, prefix))
+    write_text(snippet_path, tailwind_theme_snippet(tokens, prefix))
+    write_text(
+        notes_path,
+        f"""# Tailwind Implementation Notes
+
+Generated from `{contract_path}`.
+
+## Files
+
+- CSS variables: `{css_path.name}`
+- Tailwind theme snippet: `{snippet_path.name}`
+
+## Suggested Steps
+
+1. Import `{css_path.name}` into the app's global CSS entry.
+2. Merge `{snippet_path.name}` into `theme.extend` in `tailwind.config.*`.
+3. Prefer generated token names such as `ui-background`, `ui-surface`, `ui-accent`, and `ui-panel`.
+4. Keep component-specific exceptions in the style contract instead of creating one-off classes.
+
+This tool writes implementation artifacts. Codex should still inspect the actual Tailwind setup before editing config files.
+""",
+    )
+    return {
+        "contractPath": str(contract_path),
+        "cssVariablesPath": str(css_path),
+        "tailwindSnippetPath": str(snippet_path),
+        "notesPath": str(notes_path),
+        "message": "Tailwind mapping artifacts written.",
     }
 
 
@@ -269,6 +520,146 @@ def review_ui(arguments: dict[str, Any]) -> dict[str, Any]:
             if not findings and not missing_files
             else "Review findings manually against the contract."
         ),
+    }
+
+
+EXCLUDED_DIRS = {
+    ".git",
+    ".next",
+    ".nuxt",
+    ".svelte-kit",
+    ".turbo",
+    ".venv",
+    "build",
+    "coverage",
+    "DerivedData",
+    "dist",
+    "node_modules",
+    "target",
+}
+
+
+def read_package_json(project_dir: Path) -> dict[str, Any]:
+    package_path = project_dir / "package.json"
+    if not package_path.exists():
+        return {}
+    return load_json(package_path)
+
+
+def collect_project_files(project_dir: Path, max_files: int) -> list[Path]:
+    files: list[Path] = []
+    for root, dirs, names in os.walk(project_dir):
+        dirs[:] = [name for name in dirs if name not in EXCLUDED_DIRS]
+        for name in names:
+            path = Path(root) / name
+            files.append(path)
+            if len(files) >= max_files:
+                return files
+    return files
+
+
+def inspect_project_ui_stack(arguments: dict[str, Any]) -> dict[str, Any]:
+    project_dir = base_path(arguments.get("base_dir"))
+    max_files = int(arguments.get("max_files") or 5000)
+    files = collect_project_files(project_dir, max_files)
+    rel_files = [str(path.relative_to(project_dir)) for path in files]
+    package = read_package_json(project_dir)
+    deps = {}
+    for key in ("dependencies", "devDependencies", "peerDependencies"):
+        values = package.get(key, {})
+        if isinstance(values, dict):
+            deps.update(values)
+
+    frameworks: list[str] = []
+    styling: list[str] = []
+    component_libraries: list[str] = []
+    config_files: list[str] = []
+    files_to_inspect: list[str] = []
+
+    dep_checks = {
+        "next": "Next.js",
+        "react": "React",
+        "vue": "Vue",
+        "svelte": "Svelte",
+        "astro": "Astro",
+        "@remix-run/react": "Remix",
+        "vite": "Vite",
+        "@angular/core": "Angular",
+    }
+    for dep, label in dep_checks.items():
+        if dep in deps and label not in frameworks:
+            frameworks.append(label)
+
+    styling_checks = {
+        "tailwindcss": "Tailwind CSS",
+        "sass": "Sass",
+        "styled-components": "styled-components",
+        "@emotion/react": "Emotion",
+        "framer-motion": "Framer Motion",
+    }
+    for dep, label in styling_checks.items():
+        if dep in deps and label not in styling:
+            styling.append(label)
+
+    library_checks = {
+        "@mui/material": "MUI",
+        "antd": "Ant Design",
+        "@chakra-ui/react": "Chakra UI",
+        "@radix-ui/react-dialog": "Radix UI",
+        "lucide-react": "Lucide React",
+        "shadcn-ui": "shadcn/ui",
+    }
+    for dep, label in library_checks.items():
+        if dep in deps and label not in component_libraries:
+            component_libraries.append(label)
+
+    for rel in rel_files:
+        name = Path(rel).name
+        if name.startswith("tailwind.config") or name in {
+            "next.config.js",
+            "next.config.mjs",
+            "vite.config.ts",
+            "vite.config.js",
+            "postcss.config.js",
+            "components.json",
+            "package.json",
+        }:
+            config_files.append(rel)
+        if rel.endswith((".css", ".scss", ".sass")) and len(files_to_inspect) < 12:
+            files_to_inspect.append(rel)
+        if "components" in Path(rel).parts and rel.endswith((".tsx", ".jsx", ".ts", ".js", ".vue", ".svelte")):
+            if len(files_to_inspect) < 20:
+                files_to_inspect.append(rel)
+
+    if any(path.endswith(".module.css") for path in rel_files) and "CSS Modules" not in styling:
+        styling.append("CSS Modules")
+    if any(Path(path).name.startswith("tailwind.config") for path in rel_files) and "Tailwind CSS" not in styling:
+        styling.append("Tailwind CSS")
+    if any(path.endswith(".swift") for path in rel_files):
+        frameworks.append("SwiftUI/AppKit")
+    if any(path.endswith(".xcodeproj") or ".xcodeproj/" in path for path in rel_files):
+        config_files.append("*.xcodeproj")
+
+    return {
+        "baseDir": str(project_dir),
+        "frameworks": frameworks,
+        "styling": styling,
+        "componentLibraries": component_libraries,
+        "configFiles": sorted(set(config_files)),
+        "filesToInspect": sorted(set(files_to_inspect)),
+        "packageManager": {
+            "npm": (project_dir / "package-lock.json").exists(),
+            "pnpm": (project_dir / "pnpm-lock.yaml").exists(),
+            "yarn": (project_dir / "yarn.lock").exists(),
+            "bun": (project_dir / "bun.lockb").exists(),
+        },
+        "suggestedCodeMapping": {
+            "filesToInspect": sorted(set(config_files + files_to_inspect)),
+            "componentPatterns": component_libraries,
+            "tailwind": {"detected": "Tailwind CSS" in styling},
+        },
+        "scannedFiles": len(files),
+        "truncated": len(files) >= max_files,
     }
 
 
@@ -359,6 +750,92 @@ TOOLS = {
         },
         "handler": build_image_prompt,
     },
+    "merge_contract": {
+        "description": "Merge a preset, an existing contract, and explicit overrides into a style contract.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "base_dir": {
+                    "type": "string",
+                    "description": "Project directory used to resolve relative paths.",
+                },
+                "contract_path": {
+                    "type": "string",
+                    "description": "Existing contract path, relative to base_dir unless absolute.",
+                    "default": ".ui-style/ui-style-contract.json",
+                },
+                "out_path": {
+                    "type": "string",
+                    "description": "Output path, relative to base_dir unless absolute.",
+                    "default": ".ui-style/ui-style-contract.json",
+                },
+                "preset": {
+                    "type": "string",
+                    "description": "Optional preset id to use as the base.",
+                },
+                "overrides": {
+                    "type": "object",
+                    "description": "Explicit contract overrides. These win over preset and existing contract values.",
+                },
+                "notes": {"type": "string"},
+            },
+            "additionalProperties": False,
+        },
+        "handler": merge_contract,
+    },
+    "generate_style_guide": {
+        "description": "Generate a human-readable UI_STYLE_GUIDE.md from a style contract.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "base_dir": {
+                    "type": "string",
+                    "description": "Project directory used to resolve relative paths.",
+                },
+                "contract_path": {
+                    "type": "string",
+                    "description": "Contract path, relative to base_dir unless absolute.",
+                    "default": ".ui-style/ui-style-contract.json",
+                },
+                "out_path": {
+                    "type": "string",
+                    "description": "Output Markdown path, relative to base_dir unless absolute.",
+                    "default": ".ui-style/UI_STYLE_GUIDE.md",
+                },
+            },
+            "additionalProperties": False,
+        },
+        "handler": generate_style_guide,
+    },
+    "apply_contract_to_tailwind": {
+        "description": "Generate Tailwind implementation artifacts from a style contract.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "base_dir": {
+                    "type": "string",
+                    "description": "Project directory used to resolve relative paths.",
+                },
+                "contract_path": {
+                    "type": "string",
+                    "description": "Contract path, relative to base_dir unless absolute.",
+                    "default": ".ui-style/ui-style-contract.json",
+                },
+                "out_dir": {
+                    "type": "string",
+                    "description": "Output directory, relative to base_dir unless absolute.",
+                    "default": ".ui-style",
+                },
+                "prefix": {
+                    "type": "string",
+                    "description": "Token prefix for generated Tailwind and CSS variable names.",
+                    "default": "ui",
+                },
+            },
+            "additionalProperties": False,
+        },
+        "handler": apply_contract_to_tailwind,
+    },
     "review_ui": {
         "description": "Run a lightweight heuristic UI style review against a contract.",
         "inputSchema": {
@@ -383,6 +860,25 @@ TOOLS = {
             "additionalProperties": False,
         },
         "handler": review_ui,
+    },
+    "inspect_project_ui_stack": {
+        "description": "Inspect a project to detect frontend framework, styling stack, component libraries, and UI files to review.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "base_dir": {
+                    "type": "string",
+                    "description": "Project directory to inspect.",
+                },
+                "max_files": {
+                    "type": "integer",
+                    "description": "Maximum number of files to scan.",
+                    "default": 5000,
+                },
+            },
+            "additionalProperties": False,
+        },
+        "handler": inspect_project_ui_stack,
     },
 }
 

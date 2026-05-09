@@ -1,6 +1,6 @@
 {
   "name": "ui-style-director",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Create enforceable UI style contracts from requirements, code, visual drafts, and presets.",
   "author": {
     "name": "Windy",

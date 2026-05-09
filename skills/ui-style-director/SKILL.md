@@ -109,7 +109,11 @@ When the UI Style Director MCP server is available, prefer its tools over shell 
 - `get_preset`: read the full JSON for a named preset.
 - `build_contract`: create `.ui-style/ui-style-contract.json` from a preset.
 - `build_image_prompt`: create a GPT-image-2-ready prompt from a contract.
+- `merge_contract`: merge a preset, an existing contract, and explicit overrides.
+- `generate_style_guide`: generate `.ui-style/UI_STYLE_GUIDE.md` from a contract.
+- `apply_contract_to_tailwind`: write Tailwind token mapping artifacts.
 - `review_ui`: run a lightweight contract-based UI drift scan.
+- `inspect_project_ui_stack`: detect frontend framework, styling system, component libraries, and useful UI files.
 
 For tools that write or read project files, pass `base_dir` as the absolute path to the target project directory so relative paths resolve into the project, not the plugin directory.
 
